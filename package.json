@@ -1,0 +1,16 @@
+{
+  "name": "figma-userflow-generator",
+  "version": "1.0.0",
+  "description": "Figma plugin to generate user flows from text requirements",
+  "main": "code.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "watch": "tsc -p tsconfig.json --watch"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.82.0",
+    "typescript": "^5.5.3"
+  }
+}

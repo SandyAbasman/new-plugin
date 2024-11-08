@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: Inter, sans-serif;
+      padding: 20px;
+    }
+    .requirements-list {
+      max-height: 400px;
+      overflow-y: auto;
+      margin: 10px 0;
+    }
+    .requirement-item {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .requirement-input {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .remove-btn {
+      background: #ff4d4d;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 0 8px;
+      cursor: pointer;
+    }
+    .add-btn {
+      background-color: #1ea362;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      margin-bottom: 12px;
+    }
+    .generate-btn {
+      background-color: #18A0FB;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+    }
+    .add-btn:hover {
+      background-color: #178c52;
+    }
+    .generate-btn:hover {
+      background-color: #0D8DE3;
+    }
+    .instructions {
+      color: #666;
+      font-size: 12px;
+      margin-bottom: 16px;
+    }
+    .empty-state {
+      text-align: center;
+      color: #666;
+      padding: 20px;
+      border: 2px dashed #ccc;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="instructions">
+    Add steps to create your user flow:
+  </div>
+  <button id="addStep" class="add-btn">+ Add Step</button>
+  <div id="requirementsList" class="requirements-list"></div>
+  <button id="generate" class="generate-btn">Generate User Flow</button>
+
+  <script>
+    let requirements = [];
+
+    function createRequirementItem(value = '') {
+      const item = document.createElement('div');
+      item.className = 'requirement-item';
+      
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'requirement-input';
+      input.value = value;
+      input.placeholder = 'Enter step description';
+      
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'remove-btn';
+      removeBtn.textContent = '×';
+      removeBtn.onclick = () => {
+        item.remove();
+        updateEmptyState();
+      };
+      
+      item.appendChild(input);
+      item.appendChild(removeBtn);
+      return item;
+    }
+
+    function updateEmptyState() {
+      const list = document.getElementById('requirementsList');
+      const items = list.querySelectorAll('.requirement-item');
+      
+      if (items.length === 0) {
+        const emptyState = document.createElement('div');
+        emptyState.className = 'empty-state';
+        emptyState.textContent = 'No steps added yet. Click "Add Step" to begin.';
+        list.appendChild(emptyState);
+      } else {
+        const emptyState = list.querySelector('.empty-state');
+        if (emptyState) {
+          emptyState.remove();
+        }
+      }
+    }
+
+    document.getElementById('addStep').onclick = () => {
+      const list = document.getElementById('requirementsList');
+      const emptyState = list.querySelector('.empty-state');
+      if (emptyState) {
+        emptyState.remove();
+      }
+      list.appendChild(createRequirementItem());
+    };
+
+    document.getElementById('generate').onclick = () => {
+      const inputs = document.querySelectorAll('.requirement-input');
+      const requirements = Array.from(inputs)
+        .map(input => input.value.trim())
+        .filter(value => value !== '');
+
+      if (requirements.length === 0) {
+        alert('Please add at least one step');
+        return;
+      }
+
+      parent.postMessage({ 
+        pluginMessage: { 
+          type: 'generate-flow',
+          requirements: requirements.join('\n')
+        }
+      }, '*');
+    };
+
+    // Initialize empty state
+    updateEmptyState();
+  </script>
+</body>
+</html>
